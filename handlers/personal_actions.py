@@ -4,7 +4,6 @@ import config
 import re
 from bot import BotDB
 from keyboards import kb_client
-from keyboards import reg_kb
 
 @dp.message_handler(commands = "start")
 async def start(message: types.Message):

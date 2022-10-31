@@ -19,7 +19,7 @@ bot = Bot(token=config.BOT_TOKEN, parse_mode="HTML")
 #storage=MemoryStorage() для хранения в памяти states
 dp = Dispatcher(bot, storage=MemoryStorage())
 #Логгирование
-dp.middleware.setup(LoggingMiddleware())
+#dp.middleware.setup(LoggingMiddleware())
 
 # activate filters
 dp.filters_factory.bind(IsOwnerFilter)

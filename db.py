@@ -6,6 +6,17 @@ class BotDB:
         self.conn = sqlite3.connect(db_file)
         self.cursor = self.conn.cursor()
 
+    def add_user2(self, user_id, selected_student_id):
+        """Добавляем юзера в базу"""
+        self.cursor.execute("INSERT INTO `users` (`user_id`,'selected_student_id') VALUES (?, ?)",
+                            (user_id, selected_student_id,))
+        return self.conn.commit()
+
+    def find_user(self, name):
+        """Проверяем, есть ли юзер в базе"""
+        result = self.cursor.execute("SELECT 'id' FROM `students` WHERE `name` = ?", (name,))
+        return int(len(result.fetchall()))
+
     def user_exists(self, user_id):
         """Проверяем, есть ли юзер в базе"""
         result = self.cursor.execute("SELECT `id` FROM `users` WHERE `user_id` = ?", (user_id,))
