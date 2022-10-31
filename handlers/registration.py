@@ -3,6 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
 from dispatcher import dp
 from states import registration
+from dispatcher import dp
 
 @dp.message_handler(commands=("registration", "r", "reg"))
 async def reg(message: types.Message):
