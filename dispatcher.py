@@ -13,7 +13,7 @@ if not config.BOT_TOKEN:
 
 # init
 bot = Bot(token=config.BOT_TOKEN, parse_mode="HTML")
-dp = Dispatcher(bot, storage=MemoryStorage)
+dp = Dispatcher(bot)
 
 # activate filters
 dp.filters_factory.bind(IsOwnerFilter)
