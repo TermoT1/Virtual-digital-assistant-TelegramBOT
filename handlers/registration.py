@@ -56,3 +56,4 @@ async def get_name(message: types.Message, state: FSMContext):
     id = BotDB.find_user(message.text)
     BotDB.add_user2(message.from_user.id, id)
     await message.answer(f"Пользователь добавлен!")
+

@@ -71,7 +71,4 @@ async def start(message: types.Message):
     else:
         await message.reply("Записей не обнаружено!")
 
-@dp.message_handler(commands=("test","t"))
-async def start(message: types.Message):
-    await message.bot.send_message(message.from_user.id, "Тестовое сообщение!", reply_markup=kb_client)
 

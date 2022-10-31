@@ -6,6 +6,11 @@ class BotDB:
         self.conn = sqlite3.connect(db_file)
         self.cursor = self.conn.cursor()
 
+    def answer_question(self, question):
+        """Добавляем юзера в базу"""
+        result = self.cursor.execute("SELECT `answer` FROM `questions` WHERE `question` = ?", (question,))
+        return result.fetchall()
+
     def add_user2(self, user_id, selected_student_id):
         """Добавляем юзера в базу"""
         self.cursor.execute("INSERT INTO `users` (`user_id`,'selected_student_id') VALUES (?, ?)",
