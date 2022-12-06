@@ -7,8 +7,14 @@ class BotDB:
         self.cursor = self.conn.cursor()
 
     def answer_question(self, question):
-        """Добавляем юзера в базу"""
-        result = self.cursor.execute("SELECT `answer` FROM `questions` WHERE `question` = ?", (question,))
+        """Ответ на вопрос"""
+        "Добавление % к каждому слову"
+        strTemp = question.split(' ')
+        question = ""
+        for c in strTemp:
+            c = "%" + c + "%"
+            question += c
+        result = self.cursor.execute("SELECT `answer` FROM `questions` WHERE `question` LIKE ?", (question,))
         return result.fetchall()
 
     def add_user2(self, user_id, selected_student_id):

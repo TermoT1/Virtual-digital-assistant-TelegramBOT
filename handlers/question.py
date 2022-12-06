@@ -12,7 +12,7 @@ async def start(message: types.Message):
     for i in cmd_variants:
         for j in i:
             question = question.replace(j, '').strip()
-    await message.answer(f"Question = {question}")
+    await message.answer(f"Question: {question}")
     answer = BotDB.answer_question(question)
     await message.answer(f"Ответ: {answer}.")
 
