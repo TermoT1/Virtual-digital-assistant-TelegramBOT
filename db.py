@@ -17,6 +17,16 @@ class BotDB:
         result = self.cursor.execute("SELECT `answer` FROM `questions` WHERE `question` LIKE ?", (question,))
         return result.fetchall()
 
+    def answer_question_by_id(self, id):
+        """Получение записи"""
+        result = self.cursor.execute("SELECT * FROM `questions` WHERE `id` = ?", (id,))
+        return result.fetchall()
+
+    def delete_answer_question(self, id):
+        """Удаление записи"""
+        self.cursor.execute("DELETE FROM `questions` WHERE `id` = ?", (id,))
+        return self.conn.commit()
+
     def add_answer_question(self, question, answer):
         """Добавление вопроса-ответа в базу"""
         self.cursor.execute("INSERT INTO `questions` (`question`,'answer') VALUES (?, ?)", (question, answer,))
@@ -42,11 +52,6 @@ class BotDB:
         """Достаем id юзера в базе по его user_id"""
         result = self.cursor.execute("SELECT `id` FROM `users` WHERE `user_id` = ?", (user_id,))
         return result.fetchone()[0]
-
-    def add_user(self, user_id):
-        """Добавляем юзера в базу"""
-        self.cursor.execute("INSERT INTO `users` (`user_id`) VALUES (?)", (user_id,))
-        return self.conn.commit()
 
     def close(self):
         """Закрываем соединение с БД"""

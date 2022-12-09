@@ -24,4 +24,21 @@ async def start(message: types.Message):
     else:
         await message.reply("Ответ не найден!")
 
+@dp.message_handler(commands = ("qid"), commands_prefix = "/!")
+async def select_by_id(message: types.Message):
+    cmd_variants = (('/qid'))
+    id = message.text
+    for i in cmd_variants:
+        for j in i:
+            id = id.replace(j, '').strip()
 
+    if len(id):
+        await message.answer(f"id: {id}")
+        qst_answr = BotDB.answer_question_by_id(id)
+    else:
+        await message.reply("Не введен id!")
+
+    if len(qst_answr):
+        await message.answer(f"Запись: {qst_answr}.")
+    else:
+        await message.reply("Запись не найдена!")
