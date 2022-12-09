@@ -6,9 +6,9 @@ from config import ADMINS_ID
 from states import adminStates
 
 
-@dp.message_handler(commands = ("quiestion", "quest", "q"), commands_prefix = "/!")
+@dp.message_handler(commands = ("question", "quest", "q"), commands_prefix = "/!")
 async def start(message: types.Message):
-    cmd_variants = (('/quiestion', '/quiest', '/q'))
+    cmd_variants = (('/question', '/quest', '/q'))
     question = message.text
     for i in cmd_variants:
         for j in i:
@@ -55,10 +55,10 @@ async def qadd(message: types.Message):
             flag = True
     if flag:
         await message.answer(f"Вы начали добавление нового вопроса в БД. \nВведите вопрос: ")
-        await adminStates.quiest.set()
+        await adminStates.quest.set()
 
 
-@dp.message_handler(state=adminStates.quiest)
+@dp.message_handler(state=adminStates.quest)
 async def addquest(message: types.Message, state: FSMContext):
     quest = message.text
     if len(quest):

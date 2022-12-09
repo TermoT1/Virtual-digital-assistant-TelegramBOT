@@ -1,5 +1,6 @@
 from aiogram.dispatcher.filters.state import StatesGroup, State
 
 class adminStates(StatesGroup):
-    quiest = State()
+    quest = State()
     answer = State()
+    message = State()

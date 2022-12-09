@@ -53,6 +53,18 @@ class BotDB:
         result = self.cursor.execute("SELECT `id` FROM `users` WHERE `user_id` = ?", (user_id,))
         return result.fetchone()[0]
 
+    def get_user_id(self, user_id):
+        """Достаем юзера в базе по его user_id"""
+        result = self.cursor.execute("SELECT `id` FROM `users` WHERE `user_id` = ?", (user_id,))
+        return result.fetchone()[0]
+
+    def get_name_user_by_id(self, user_id):
+        """Достаем имя юзера в базе по его user_id"""
+        result = self.cursor.execute("SELECT students.name "
+                                     "FROM students INNER JOIN users ON users.selected_student_id = students.id "
+                                     "WHERE users.user_id = ?", (user_id,))
+        return result.fetchone()
+
     def close(self):
         """Закрываем соединение с БД"""
         self.connection.close()
