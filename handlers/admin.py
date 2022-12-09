@@ -6,6 +6,15 @@ from config import ADMINS_ID
 from states import adminStates
 
 
+@dp.message_handler(commands=("qdelete"))
+async def ahelp(message: types.Message):
+    flag = False
+    for admin in ADMINS_ID:
+        if message.from_user.id == admin:
+            flag = True
+    if flag:
+        await message.answer(f"add")
+
 @dp.message_handler(commands=("ahelp"))
 async def ahelp(message: types.Message):
     flag = False
@@ -48,7 +57,8 @@ async def addanswer(message: types.Message, state: FSMContext):
         await state.update_data(answer=answer)
         data = await state.get_data()
         quest = data.get('quest')
-        # ЗАПРОС!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        BotDB.add_answer_question(quest, answer)
+        await message.reply("Запись в БД добавлена.")
         await state.finish()
     else:
         await message.reply("Не введен ответ!")

@@ -9,13 +9,18 @@ class BotDB:
     def answer_question(self, question):
         """Ответ на вопрос"""
         "Добавление % к каждому слову"
-        strTemp = question.split(' ')
+        strtemp = question.split(' ')
         question = ""
-        for c in strTemp:
+        for c in strtemp:
             c = "%" + c + "%"
             question += c
         result = self.cursor.execute("SELECT `answer` FROM `questions` WHERE `question` LIKE ?", (question,))
         return result.fetchall()
+
+    def add_answer_question(self, question, answer):
+        """Добавление вопроса-ответа в базу"""
+        self.cursor.execute("INSERT INTO `questions` (`question`,'answer') VALUES (?, ?)", (question, answer,))
+        return self.conn.commit()
 
     def add_user2(self, user_id, selected_student_id):
         """Добавляем юзера в базу"""
