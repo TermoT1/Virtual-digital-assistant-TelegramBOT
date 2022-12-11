@@ -8,22 +8,12 @@ from bot import BotDB
 @dp.message_handler(commands=("registration", "r", "reg"))
 async def reg(message: types.Message):
     if (not BotDB.user_exists(message.from_user.id)):
-        group_kb = ReplyKeyboardMarkup(
-            keyboard=[
-                [
-                    KeyboardButton(text=f'ПИЭ-19')
-                ],
-                [
-                    KeyboardButton(text=f'ПИЭ-21')
-                ],
-                [
-                    KeyboardButton(text=f'Отменить')
-                ],
-            ],
-            resize_keyboard=True,
-            one_time_keyboard=True
-        )
-        await message.answer(f"Выберите свою группу", reply_markup= group_kb)
+        list_groups = BotDB.get_groups()
+        kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+        for i in list_groups:
+            for j in i:
+                kb.add(KeyboardButton(j))
+        await message.answer(f"Выберите свою группу", reply_markup= kb)
         await registration.group.set()
     else:
         await message.answer(f"Пользователь с таким id телеграмма уже создан!")
@@ -32,7 +22,7 @@ async def reg(message: types.Message):
 async def get_group(message: types.Message, state: FSMContext):
     global list
     await state.update_data(group=message.text)
-    list_students = BotDB.get_students()
+    list_students = BotDB.get_students(message.text)
 
     kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     for i in list_students:

@@ -70,9 +70,16 @@ class BotDB:
                                      "WHERE users.user_id = ?", (user_id,))
         return result.fetchone()
 
-    def get_students(self):
+    def get_students(self, name):
         """Достаем id юзера в базе по его user_id"""
-        result = self.cursor.execute("SELECT `name` FROM `students`")
+        result = self.cursor.execute("SELECT students.name "
+                                     "FROM students INNER JOIN groups ON groups.id = students.group_id "
+                                     "WHERE groups.name = ?", (name,))
+        return result.fetchall()
+
+    def get_groups(self):
+        """Достаем id юзера в базе по его user_id"""
+        result = self.cursor.execute("SELECT name FROM groups")
         return result.fetchall()
 
     def close(self):
