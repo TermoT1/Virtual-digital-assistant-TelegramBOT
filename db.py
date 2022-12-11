@@ -40,8 +40,13 @@ class BotDB:
 
     def find_user(self, name):
         """Проверяем, есть ли юзер в базе"""
-        result = self.cursor.execute("SELECT 'id' FROM `students` WHERE `name` = ?", (name,))
+        result = self.cursor.execute("SELECT `id` FROM `students` WHERE `name` = ?", (name,))
         return int(len(result.fetchall()))
+
+    def find_user2(self, name):
+        """Проверяем, есть ли юзер в базе"""
+        result = self.cursor.execute("SELECT `id` FROM `students` WHERE `name` = ?", (name,))
+        return result.fetchone()[0]
 
     def user_exists(self, user_id):
         """Проверяем, есть ли юзер в базе"""
@@ -64,6 +69,11 @@ class BotDB:
                                      "FROM students INNER JOIN users ON users.selected_student_id = students.id "
                                      "WHERE users.user_id = ?", (user_id,))
         return result.fetchone()
+
+    def get_students(self):
+        """Достаем id юзера в базе по его user_id"""
+        result = self.cursor.execute("SELECT `name` FROM `students`")
+        return result.fetchall()
 
     def close(self):
         """Закрываем соединение с БД"""

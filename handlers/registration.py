@@ -30,31 +30,25 @@ async def reg(message: types.Message):
 
 @dp.message_handler(state=registration.group)
 async def get_group(message: types.Message, state: FSMContext):
+    global list
     await state.update_data(group=message.text)
-    name_kb = ReplyKeyboardMarkup(
-        keyboard=[
-            [
-                KeyboardButton(text=f'Важов Данил')
-            ],
-            [
-                KeyboardButton(text=f'Шипилов Владислав')
-            ],
-            [
-                KeyboardButton(text=f'Студент3')
-            ],
-            [
-                KeyboardButton(text=f'Отменить')
-            ],
-        ],
-        resize_keyboard=True,
-        one_time_keyboard=True
-    )
-    await message.answer(f"Выберите свое имя", reply_markup=name_kb)
+    list_students = BotDB.get_students()
+
+    kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    for i in list_students:
+        for j in i:
+            kb.add(KeyboardButton(j))
+
+    await message.answer(f"Выберите свое имя", reply_markup=kb)
     await registration.name.set()
 @dp.message_handler(state=registration.name)
 async def get_name(message: types.Message, state: FSMContext):
-    id = BotDB.find_user(message.text)
-    BotDB.add_user2(message.from_user.id, id)
-    await message.answer(f"Пользователь добавлен!")
-    #!Закрывает state!
-    await state.finish()
+    temp = message.text
+    if temp == 'Отменить':
+        await state.finish()
+    else:
+        id = BotDB.find_user2(message.text)
+        BotDB.add_user2(message.from_user.id, id)
+        await message.answer(f"Пользователь добавлен!")
+        #!Закрывает state!
+        await state.finish()

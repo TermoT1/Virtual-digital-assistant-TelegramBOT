@@ -94,8 +94,11 @@ async def message(message: types.Message):
         for j in i:
             mess = mess.replace(j, '').strip()
     if len(mess):
-        str = f"Сообщение от пользователя с id {message.from_user.id}:\n"
+        global name_student
+        name_student = BotDB.get_name_user_by_id(message.from_user.id)
+        str = f"Сообщение от студента {name_student} с id {message.from_user.id}:\n"
         for admin in ADMINS_ID:
             await bot.send_message(admin, str + mess)
     else:
         await message.reply("Пустое сообщение!")
+
