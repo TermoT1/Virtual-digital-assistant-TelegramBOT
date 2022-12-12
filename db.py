@@ -27,6 +27,11 @@ class BotDB:
         self.cursor.execute("DELETE FROM `questions` WHERE `id` = ?", (id,))
         return self.conn.commit()
 
+    def delete_user(self, id):
+        """Удаление записи"""
+        self.cursor.execute("DELETE FROM `users` WHERE `user_id` = ?", (id,))
+        return self.conn.commit()
+
     def add_answer_question(self, question, answer):
         """Добавление вопроса-ответа в базу"""
         self.cursor.execute("INSERT INTO `questions` (`question`,'answer') VALUES (?, ?)", (question, answer,))

@@ -5,6 +5,13 @@ from states import registration
 from dispatcher import dp
 from bot import BotDB
 
+@dp.message_handler(commands=("delreg"))
+async def reg(message: types.Message):
+    if (BotDB.user_exists(message.from_user.id)):
+        BotDB.delete_user(message.from_user.id)
+        await message.answer(f"Пользователь удален!")
+    else:
+        await message.answer(f"Пользователь с таким id телеграмма не зарегистрирован!")
 
 @dp.message_handler(commands=("registration", "r", "reg"))
 async def reg(message: types.Message):
@@ -66,7 +73,7 @@ async def get_name(message: types.Message, state: FSMContext):
         else:
             id = BotDB.find_user2(message.text)
             BotDB.add_user2(message.from_user.id, id)
-            await message.answer(f"Пользователь добавлен!")
+            await message.answer(f"Пользователь авторизирован!")
             #!Закрывает state!
             await state.finish()
     else:
