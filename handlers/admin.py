@@ -45,6 +45,8 @@ async def qdelete(message: types.Message):
                 await message.answer(f"Запись в БД с id:{id} не найдена!")
         else:
             await message.reply("Введите id!")
+    else:
+        await message.reply("Не администартор!")
 
 
 @dp.message_handler(commands=("qadd"))
@@ -56,6 +58,8 @@ async def qadd(message: types.Message):
     if flag:
         await message.answer(f"Вы начали добавление нового вопроса в БД. \nВведите вопрос: ")
         await adminStates.quest.set()
+    else:
+        await message.reply("Не администартор!")
 
 
 @dp.message_handler(state=adminStates.quest)

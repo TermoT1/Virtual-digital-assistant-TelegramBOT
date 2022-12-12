@@ -103,7 +103,7 @@ async def message(message: types.Message):
         if len(mess):
             global name_student
             name_student = BotDB.get_name_user_by_id(message.from_user.id)
-            str = f"Сообщение от студента {name_student} с id {message.from_user.id}:\n"
+            str = f"Сообщение от студента {name_student[0]} с id {message.from_user.id}:\n"
             for admin in ADMINS_ID:
                 await bot.send_message(admin, str + mess)
         else:
