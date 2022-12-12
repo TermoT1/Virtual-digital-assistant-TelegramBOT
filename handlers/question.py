@@ -47,7 +47,6 @@ async def quest(message: types.Message):
             await message.answer(f"Хотели бы вы отправить уведомление преподавателю?", reply_markup=kb)
             global name_student
             name_student = BotDB.get_name_user_by_id(message.from_user.id)
-
             await adminStates.message.set()
     else:
         await message.reply("Пройдите регистрацию! /reg")
@@ -57,7 +56,7 @@ async def quest(message: types.Message):
 async def message_admin(message: types.Message, state: FSMContext):
     str = message.text
     if str == "Да":
-        strr = f"Уведомление от пользователя {name_student} с id {message.from_user.id}:\n" \
+        strr = f"Уведомление от пользователя {name_student[0]} с id {message.from_user.id}:\n" \
               f"Не найден ответ на вопрос:\n" + unfound_question
         for admin in ADMINS_ID:
             await bot.send_message(admin, strr)
