@@ -78,13 +78,15 @@ async def select_by_id(message: types.Message):
                 id = id.replace(j, '').strip()
 
         if len(id):
-            await message.answer(f"id: {id}")
             qst_answr = BotDB.answer_question_by_id(id)
         else:
             await message.reply("Не введен id!")
 
         if len(qst_answr):
-            await message.answer(f"Запись: {qst_answr}.")
+            i = qst_answr[0]
+            await message.answer(f"Id: {i[0]}")
+            await message.answer(f"Вопрос: {i[1]}")
+            await message.answer(f"Ответ: {i[2]}")
         else:
             await message.reply("Запись не найдена!")
     else:
