@@ -13,7 +13,7 @@ async def qdelete(message: types.Message):
         if message.from_user.id == admin:
             flag = True
     if flag:
-        cmd_variants = (('/qdelete', '/QDELETE'))
+        cmd_variants = (('/qdelete'))
         id = message.text
         id = id.replace(cmd_variants, '').strip()
         if len(id):
