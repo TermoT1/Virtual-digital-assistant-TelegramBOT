@@ -71,7 +71,7 @@ async def message_admin(message: types.Message, state: FSMContext):
 @dp.message_handler(commands=("qid"), commands_prefix="/!")
 async def select_by_id(message: types.Message):
     if (BotDB.user_exists(message.from_user.id)):
-        cmd_variants = (('/qid'))
+        cmd_variants = (('/qid', '/QID'))
         id = message.text
         for i in cmd_variants:
             for j in i:
@@ -94,7 +94,7 @@ async def select_by_id(message: types.Message):
 @dp.message_handler(commands=("m"), commands_prefix="/!")
 async def message(message: types.Message):
     if (BotDB.user_exists(message.from_user.id)):
-        cmd_variants = (('/m'))
+        cmd_variants = (('/m', '/M'))
         mess = message.text
         for i in cmd_variants:
             for j in i:

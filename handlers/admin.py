@@ -6,25 +6,6 @@ from config import ADMINS_ID
 from states import adminStates
 
 
-@dp.message_handler(commands = ("question", "quest", "q"), commands_prefix = "/!")
-async def start(message: types.Message):
-    cmd_variants = (('/question', '/quest', '/q'))
-    question = message.text
-    for i in cmd_variants:
-        for j in i:
-            question = question.replace(j, '').strip()
-
-    if len(question):
-        await message.answer(f"Question: {question}")
-        answer = BotDB.answer_question(question)
-    else:
-        await message.reply("Пустой вопрос!")
-
-    if len(answer):
-        await message.answer(f"Ответ: {answer}.")
-    else:
-        await message.reply("Ответ не найден!")
-
 @dp.message_handler(commands = ("qdelete"), commands_prefix = "/!")
 async def qdelete(message: types.Message):
     flag = False
@@ -32,7 +13,7 @@ async def qdelete(message: types.Message):
         if message.from_user.id == admin:
             flag = True
     if flag:
-        cmd_variants = (('/qdelete'))
+        cmd_variants = (('/qdelete', '/QDELETE'))
         id = message.text
         id = id.replace(cmd_variants, '').strip()
         if len(id):

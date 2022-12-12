@@ -15,7 +15,7 @@ class BotDB:
             c = "%" + c + "%"
             question += c
         result = self.cursor.execute("SELECT `answer` FROM `questions` WHERE `question` LIKE ?", (question,))
-        return result.fetchall()
+        return result.fetchone()
 
     def answer_question_by_id(self, id):
         """Получение записи"""
