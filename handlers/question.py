@@ -14,7 +14,7 @@ from states import adminStates
 @dp.message_handler(commands=("question", "quest", "q"), commands_prefix="/!")
 async def quest(message: types.Message):
     if (BotDB.user_exists(message.from_user.id)):
-        cmd_variants = (('/question', '/quest', '/q', '/Q'))
+        cmd_variants = (('/question', '/quest', '/q',))
         question = message.text
         for i in cmd_variants:
             for j in i:
@@ -26,7 +26,8 @@ async def quest(message: types.Message):
         else:
             await message.reply("Пустой вопрос!")
         if len(answer):
-            await message.answer(f"Ответ: {answer[0]}.")
+            str = answer[0]
+            await message.answer(f"Ответ: {str[0]}")
         else:
             await message.reply("Ответ не найден!")
             kb = ReplyKeyboardMarkup(
