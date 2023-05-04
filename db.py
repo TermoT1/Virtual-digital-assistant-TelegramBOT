@@ -1,5 +1,9 @@
 import sqlite3
 
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
+
+
 class BotDB:
 
     def __init__(self, db_file):
@@ -8,13 +12,35 @@ class BotDB:
 
     def answer_question(self, question):
         """Ответ на вопрос"""
-        "Добавление % к каждому слову"
-        strtemp = question.split(' ')
-        question = ""
-        for c in strtemp:
-            c = "%" + c + "%"
-            question += c
-        result = self.cursor.execute("SELECT `answer` FROM `questions` WHERE `question` LIKE ?", (question,))
+        #Вопрос юзера к нижнему регистру
+        question = question.lower()
+        #Получаем список вопросов и их id
+        list_question = self.cursor.execute("SELECT `id`, `question` FROM `questions` ").fetchall()
+
+        #Схожесть
+        max_ratio = 0
+        #id записи в БД
+        id = 0
+
+        #Проверяем каждый вопрос из БД
+        for row in list_question:
+            str = row[1]
+            #Есть ли разделение в вопросе через;
+            if str.find(";") != -1:
+                list = str.split(';')
+                for row_str in list:
+                    ratio = fuzz.WRatio(question, row_str)
+                    if ratio > max_ratio:
+                        max_ratio = ratio
+                        id = row[0]
+            else:
+                ratio = fuzz.WRatio(question, row[1])
+                if ratio > max_ratio:
+                    max_ratio = ratio
+                    id = row[0]
+
+        #Получение ответа из БД по id
+        result = self.cursor.execute("SELECT `answer` FROM `questions` WHERE `id` = ?", (id,))
         return result.fetchall()
 
     def answer_question_by_id(self, id):
@@ -61,6 +87,14 @@ class BotDB:
     def get_user_id(self, user_id):
         """Достаем id юзера в базе по его user_id"""
         result = self.cursor.execute("SELECT `id` FROM `users` WHERE `user_id` = ?", (user_id,))
+        return result.fetchone()[0]
+
+    def get_group_by_user_id(self, user_id):
+        """Достаем группу из базы по user_id"""
+        result = self.cursor.execute("SELECT g.name "
+                                     "FROM groups g INNER JOIN students s on s.group_id = g.id "
+                                     "INNER JOIN users u on u.selected_student_id = s.id "
+                                     "WHERE u.user_id = ?", (user_id,))
         return result.fetchone()[0]
 
     def get_user_id(self, user_id):

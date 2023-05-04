@@ -1,7 +1,14 @@
-BOT_TOKEN="5688790079:AAFpEPUgs68HVx6JKYb1bsq8zTdbde6i6S0"
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+BOT_TOKEN = os.getenv('BOT_TOKEN')
 PATH_BD='database.db'
+URL_SCHEDULE ="https://schedule.nbikemsu.ru/group/"
 
 ADMINS_ID = [
-    5619763814,
-    5435138022
+
+    os.getenv('ADMINS_ID'),
+    os.getenv('ADMINS_ID2'),
 ]

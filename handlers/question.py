@@ -7,9 +7,28 @@ from dispatcher import dp
 from bot import BotDB
 from dispatcher import bot
 from config import ADMINS_ID
+from config import URL_SCHEDULE
 from states import adminStates
+import datetime
 
-
+@dp.message_handler(commands=("schedule", "расписание"), commands_prefix="/!")
+async def schedule(message: types.Message):
+    if (BotDB.user_exists(message.from_user.id)):
+        group = BotDB.get_group_by_user_id(message.from_user.id)
+        str = "Ссылка на расписание вашей группы: " + URL_SCHEDULE + group
+        # определяем текущую дату
+        today = datetime.date.today()
+        # определяем номер недели в году (ISO-формат)
+        week_number = today.isocalendar()[1]
+        # проверяем, четная ли неделя
+        if week_number % 2 == 0:
+            week = "Сейчас идет четная неделя"
+        else:
+            week = "Сейчас идет нечетная неделя"
+        str += "\n" + week
+        await message.bot.send_message(message.from_user.id, str)
+    else:
+        await message.reply("Пройдите регистрацию! /reg")
 
 @dp.message_handler(commands=("question", "quest", "q"), commands_prefix="/!")
 async def quest(message: types.Message):
@@ -17,8 +36,7 @@ async def quest(message: types.Message):
         cmd_variants = (('/question', '/quest', '/q',))
         question = message.text
         for i in cmd_variants:
-            for j in i:
-                question = question.replace(j, '').strip()
+            question = question.replace(i, '').strip()
 
         if len(question):
             await message.answer(f"Question: {question}")
