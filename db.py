@@ -2,6 +2,7 @@ import sqlite3
 
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
+import hashlib
 
 
 class BotDB:
@@ -12,20 +13,20 @@ class BotDB:
 
     def answer_question(self, question):
         """Ответ на вопрос"""
-        #Вопрос юзера к нижнему регистру
+        # Вопрос юзера к нижнему регистру
         question = question.lower()
-        #Получаем список вопросов и их id
+        # Получаем список вопросов и их id
         list_question = self.cursor.execute("SELECT `id`, `question` FROM `questions` ").fetchall()
 
-        #Схожесть
+        # Схожесть
         max_ratio = 0
-        #id записи в БД
+        # id записи в БД
         id = 0
 
-        #Проверяем каждый вопрос из БД
+        # Проверяем каждый вопрос из БД
         for row in list_question:
             str = row[1]
-            #Есть ли разделение в вопросе через;
+            # Есть ли разделение в вопросе через;
             if str.find(";") != -1:
                 list = str.split(';')
                 for row_str in list:
@@ -39,7 +40,7 @@ class BotDB:
                     max_ratio = ratio
                     id = row[0]
 
-        #Получение ответа из БД по id
+        # Получение ответа из БД по id
         result = self.cursor.execute("SELECT `answer` FROM `questions` WHERE `id` = ?", (id,))
         return result.fetchall()
 
@@ -48,14 +49,36 @@ class BotDB:
         result = self.cursor.execute("SELECT * FROM `questions` WHERE `id` = ?", (id,))
         return result.fetchall()
 
+    def getAllGroupName(self):
+        """Получение названий всех групп"""
+        result = self.cursor.execute("SELECT * FROM `groups`")
+        return result.fetchall()
+
+    def login_by_id(self, id, user_id_telegram):
+        self.cursor.execute("UPDATE `users` SET user_id_telegram = ? WHERE `id` = ?",
+                            (user_id_telegram, id))
+        return self.conn.commit()
+
+    def find_by_user_fio_and_password(self, user_fio, password):
+        result = self.cursor.execute("SELECT `id` FROM `users` WHERE `user_fio` = ? AND `password` = ?",
+                            (user_fio, password,))
+        return result.fetchone()
+
+
     def delete_answer_question(self, id):
         """Удаление записи"""
         self.cursor.execute("DELETE FROM `questions` WHERE `id` = ?", (id,))
         return self.conn.commit()
 
-    def delete_user(self, id):
+    def delete_user(self, user_id_telegram):
         """Удаление записи"""
-        self.cursor.execute("DELETE FROM `users` WHERE `user_id` = ?", (id,))
+        self.cursor.execute("DELETE FROM `users` WHERE `user_id_telegram` = ?", (user_id_telegram,))
+        return self.conn.commit()
+
+    def logout(self, user_id_telegram):
+        """Выход из учетной записи"""
+        self.cursor.execute("UPDATE `users` SET user_id_telegram = NULL WHERE user_id_telegram = ?",
+                            (user_id_telegram,))
         return self.conn.commit()
 
     def add_answer_question(self, question, answer):
@@ -79,9 +102,9 @@ class BotDB:
         result = self.cursor.execute("SELECT `id` FROM `students` WHERE `name` = ?", (name,))
         return result.fetchone()[0]
 
-    def user_exists(self, user_id):
+    def user_exists(self, user_id_telegram):
         """Проверяем, есть ли юзер в базе"""
-        result = self.cursor.execute("SELECT `id` FROM `users` WHERE `user_id` = ?", (user_id,))
+        result = self.cursor.execute("SELECT `id` FROM `users` WHERE `user_id_telegram` = ?", (user_id_telegram,))
         return bool(len(result.fetchall()))
 
     def get_user_id(self, user_id):
@@ -89,12 +112,11 @@ class BotDB:
         result = self.cursor.execute("SELECT `id` FROM `users` WHERE `user_id` = ?", (user_id,))
         return result.fetchone()[0]
 
-    def get_group_by_user_id(self, user_id):
+    def get_group_by_user_id(self, user_id_telegram):
         """Достаем группу из базы по user_id"""
         result = self.cursor.execute("SELECT g.name "
-                                     "FROM groups g INNER JOIN students s on s.group_id = g.id "
-                                     "INNER JOIN users u on u.selected_student_id = s.id "
-                                     "WHERE u.user_id = ?", (user_id,))
+                                     "FROM groups g INNER JOIN users u on u.group_id = g.id "
+                                     "WHERE u.user_id_telegram = ?", (user_id_telegram,))
         return result.fetchone()[0]
 
     def get_user_id(self, user_id):
@@ -120,6 +142,13 @@ class BotDB:
         """Достаем id юзера в базе по его user_id"""
         result = self.cursor.execute("SELECT name FROM groups")
         return result.fetchall()
+
+    def save_user(self, group_id, username, password, user_id_telegram):
+        """Добавляем юзера в базу"""
+        self.cursor.execute(
+            "INSERT INTO `users` (`group_id`,`user_fio`, `password`, `user_id_telegram`) VALUES (?, ?, ?, ?)",
+            (group_id, username, password, user_id_telegram))
+        return self.conn.commit()
 
     def close(self):
         """Закрываем соединение с БД"""

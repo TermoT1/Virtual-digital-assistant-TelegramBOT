@@ -8,7 +8,6 @@ PATH_BD='database.db'
 URL_SCHEDULE ="https://schedule.nbikemsu.ru/group/"
 
 ADMINS_ID = [
-
     os.getenv('ADMINS_ID'),
     os.getenv('ADMINS_ID2'),
 ]

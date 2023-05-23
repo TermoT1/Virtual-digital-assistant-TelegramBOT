@@ -5,6 +5,18 @@ from bot import BotDB
 from config import ADMINS_ID
 from states import adminStates
 
+# @dp.message_handler(commands=("q"))
+# async def qadd(message: types.Message):
+#     flag = False
+#     for admin in ADMINS_ID:
+#         if message.from_user.id == admin:
+#             flag = True
+#     if flag:
+#         await message.answer(f"Вы начали добавление нового вопроса в БД. \nВведите вопрос: ")
+#         await adminStates.quest.set()
+#     else:
+#         await message.reply("Не администартор!")
+
 
 @dp.message_handler(commands = ("qdelete"), commands_prefix = "/!")
 async def qdelete(message: types.Message):
