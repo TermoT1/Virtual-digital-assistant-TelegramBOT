@@ -8,6 +8,6 @@ The figure below shows how the data in the database is arranged.
 ![image](https://github.com/TermoT1/Virtual-digital-assistant-TelegramBOT/assets/131129553/a3a75051-00e5-4bed-9d67-c1599172ce53)
 
 
-Schedule
+Student schedule
 ![image](https://github.com/TermoT1/Virtual-digital-assistant-TelegramBOT/assets/131129553/3a92a0a3-c830-49bc-8b22-960890cccded)
 
