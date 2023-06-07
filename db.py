@@ -1,8 +1,6 @@
 import sqlite3
 
 from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
-import hashlib
 
 
 class BotDB:
@@ -15,6 +13,7 @@ class BotDB:
         """Ответ на вопрос"""
         # Вопрос юзера к нижнему регистру
         question = question.lower()
+
         # Получаем список вопросов и их id
         list_question = self.cursor.execute("SELECT `id`, `question` FROM `questions` ").fetchall()
 
@@ -40,9 +39,13 @@ class BotDB:
                     max_ratio = ratio
                     id = row[0]
 
-        # Получение ответа из БД по id
-        result = self.cursor.execute("SELECT `answer` FROM `questions` WHERE `id` = ?", (id,))
-        return result.fetchall()
+        # Если
+        if max_ratio < 65:
+            return ""
+        else:
+            # Получение ответа из БД по id
+            result = self.cursor.execute("SELECT `answer` FROM `questions` WHERE `id` = ?", (id,))
+            return result.fetchall()
 
     def answer_question_by_id(self, id):
         """Получение записи"""
@@ -106,6 +109,17 @@ class BotDB:
         """Проверяем, есть ли юзер в базе"""
         result = self.cursor.execute("SELECT `id` FROM `users` WHERE `user_id_telegram` = ?", (user_id_telegram,))
         return bool(len(result.fetchall()))
+
+    def user_exists_by_name(self, name):
+        """Проверяем, есть ли юзер в базе"""
+        result = self.cursor.execute("SELECT `id` FROM `users` WHERE `user_fio` = ?", (name,))
+        return bool(len(result.fetchall()))
+
+    def get_user_by_id_my(self, user_id):
+        """Достаем id юзера в базе по его user_id"""
+        result = self.cursor.execute("SELECT `user_fio` FROM `users` WHERE `user_id_telegram` = ?", (user_id,))
+        return result.fetchone()[0]
+
 
     def get_user_id(self, user_id):
         """Достаем id юзера в базе по его user_id"""

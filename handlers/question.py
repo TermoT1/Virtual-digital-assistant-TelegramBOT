@@ -11,6 +11,21 @@ from config import URL_SCHEDULE
 from states import adminStates
 import datetime
 
+@dp.message_handler(commands=("books", "книги"), commands_prefix="/!")
+async def schedule(message: types.Message):
+    if (BotDB.user_exists(message.from_user.id)):
+        books_str = ""
+        books_str += "📕Базы данных:" + '\n'
+        books_str += "🔴 Введение в системы баз данных К. Дж.Дейт" + '\n' + \
+                     "🔴 MySQL по максимуму Бэрон Шварц, Вадим Ткаченко, Петр Зайцев" + '\n' + \
+                     "🔴 Семь баз данных за семь недель Джим Р. Уилсон, Эрик Редмонд" + '\n'
+        books_str += '\n'
+        books_str += '📗Программная инженерия' + '\n'
+        books_str += "🟢Книга «Программная инженерия. Учебник для вузов. 5-е издание обновленное и дополненное»"
+        await message.bot.send_message(message.from_user.id, books_str)
+    else:
+        await message.reply("Пройдите регистрацию /reg \nИли войдите в свой аккаунт /login")
+
 @dp.message_handler(commands=("schedule", "расписание"), commands_prefix="/!")
 async def schedule(message: types.Message):
     if (BotDB.user_exists(message.from_user.id)):
@@ -48,43 +63,43 @@ async def quest(message: types.Message):
             await message.answer(f"Ответ: {str[0]}")
         else:
             await message.reply("Ответ не найден!")
-            # kb = ReplyKeyboardMarkup(
-            #     keyboard=[
-            #         [
-            #             KeyboardButton(text=f'Да')
-            #         ],
-            #         [
-            #             KeyboardButton(text=f'Нет')
-            #         ],
-            #     ],
-            #     resize_keyboard=True,
-            #     one_time_keyboard=True
-            # )
-            # #Глобальная переменная для передачи question дальше
-            # global unfound_question
-            # unfound_question = question
-            # await message.answer(f"Хотели бы вы отправить уведомление преподавателю?", reply_markup=kb)
-            # global name_student
-            # name_student = BotDB.get_name_user_by_id(message.from_user.id)
-            # await adminStates.message.set()
+            kb = ReplyKeyboardMarkup(
+                keyboard=[
+                    [
+                        KeyboardButton(text=f'Да')
+                    ],
+                    [
+                        KeyboardButton(text=f'Нет')
+                    ],
+                ],
+                resize_keyboard=True,
+                one_time_keyboard=True
+            )
+            #Глобальная переменная для передачи question дальше
+            global unfound_question
+            unfound_question = question
+            await message.answer(f"Хотели бы вы отправить уведомление преподавателю?", reply_markup=kb)
+            global name_student
+            name_student = BotDB.get_user_by_id_my(message.from_user.id)
+            await adminStates.message.set()
     else:
         await message.reply("Пройдите регистрацию /reg \nИли войдите в свой аккаунт /login")
 
 
-# @dp.message_handler(state=adminStates.message)
-# async def message_admin(message: types.Message, state: FSMContext):
-#     str = message.text
-#     if str == "Да":
-#         strr = f"Уведомление от пользователя {name_student[0]} с id {message.from_user.id}:\n" \
-#               f"Не найден ответ на вопрос:\n" + unfound_question
-#         for admin in ADMINS_ID:
-#             await bot.send_message(admin, strr)
-#         await state.finish()
-#     elif str == "Нет":
-#         await state.finish()
-#     else:
-#         await message.answer("Ошибка ввода!")
-#         await state.finish()
+@dp.message_handler(state=adminStates.message)
+async def message_admin(message: types.Message, state: FSMContext):
+    str = message.text
+    if str == "Да":
+        strr = f"Уведомление от пользователя {name_student} с id {message.from_user.id}:\n" \
+              f"Не найден ответ на вопрос:\n" + unfound_question
+        for admin in ADMINS_ID:
+            await bot.send_message(admin, strr)
+        await state.finish()
+    elif str == "Нет":
+        await state.finish()
+    else:
+        await message.answer("Ошибка ввода!")
+        await state.finish()
 
 
 @dp.message_handler(commands=("qid"), commands_prefix="/!")
@@ -122,7 +137,7 @@ async def message(message: types.Message):
                 mess = mess.replace(j, '').strip()
         if len(mess):
             global name_student
-            name_student = BotDB.get_name_user_by_id(message.from_user.id)
+            name_student = BotDB.get_group_by_user_id2(message.from_user.id)
             str = f"Сообщение от студента {name_student[0]} с id {message.from_user.id}:\n"
             for admin in ADMINS_ID:
                 await bot.send_message(admin, str + mess)

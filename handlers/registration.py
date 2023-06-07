@@ -176,10 +176,14 @@ async def select_group(callback_query: types.CallbackQuery, state: FSMContext):
 @dp.message_handler(state=RegistrationStates.USERNAME_INPUT)
 async def input_username(message: types.Message, state: FSMContext):
     username = message.text
-    await state.update_data(username=username)
-    await message.answer('Введите ваш пароль (пароль будет удален из истории):')
-    # устанавливаем состояние ввода пароля
-    await RegistrationStates.PASSWORD_INPUT.set()
+    if (not BotDB.user_exists_by_name(username)):
+        await state.update_data(username=username)
+        await message.answer('Введите ваш пароль (пароль будет удален из истории):')
+        # устанавливаем состояние ввода пароля
+        await RegistrationStates.PASSWORD_INPUT.set()
+    else:
+        await message.answer('Пользователь с таким ФИО уже существует!')
+        await state.finish()
 
 
 # обработчик ввода пароля
